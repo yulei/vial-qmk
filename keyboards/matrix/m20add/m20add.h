@@ -5,9 +5,63 @@
 #pragma once
 
 #include "quantum.h"
+#include "tca6424.h"
 
+#define DEF_PIN(port, pin) (((port) << 8) | pin)
+#define GET_PORT(pp) (((pp) >> 8) & 0xFF)
+#define GET_PIN(pp) ((pp) & 0xFF)
+#define ROW1_MASK 0x80
+#define ROW2_MASK 0x40
+#define ROW3_MASK 0x01
+#define ROW4_MASK 0x04
+#define ROW5_MASK 0x10
+#define ROW6_MASK 0x20
+#define ROW_PORT TCA6424_PORT2
 
-#define LAYOUT_tkl_iso_tsangan( \
+#define COL1_MASK 0x02
+#define COL2_MASK 0x80
+#define COL3_MASK 0x40
+#define COL4_MASK 0x20
+#define COL5_MASK 0x10
+#define COL6_MASK 0x08
+#define COL7_MASK 0x04
+#define COL8_MASK 0x02
+#define COL9_MASK 0x01
+#define COL10_MASK 0x80
+#define COL11_MASK 0x40
+#define COL12_MASK 0x20
+#define COL13_MASK 0x10
+#define COL14_MASK 0x08
+#define COL15_MASK 0x04
+#define COL16_MASK 0x02
+
+#define MATRIX_ROW_PINS { \
+    DEF_PIN(TCA6424_PORT2, 7), \
+    DEF_PIN(TCA6424_PORT2, 6), \
+    DEF_PIN(TCA6424_PORT2, 0), \
+    DEF_PIN(TCA6424_PORT2, 2), \
+    DEF_PIN(TCA6424_PORT2, 4), \
+    DEF_PIN(TCA6424_PORT2, 5) }
+
+#define MATRIX_COL_PINS { \
+    DEF_PIN(TCA6424_PORT2, 1), \
+    DEF_PIN(TCA6424_PORT1, 7), \
+    DEF_PIN(TCA6424_PORT1, 6), \
+    DEF_PIN(TCA6424_PORT1, 5), \
+    DEF_PIN(TCA6424_PORT1, 4), \
+    DEF_PIN(TCA6424_PORT1, 3), \
+    DEF_PIN(TCA6424_PORT1, 2), \
+    DEF_PIN(TCA6424_PORT1, 1), \
+    DEF_PIN(TCA6424_PORT1, 0), \
+    DEF_PIN(TCA6424_PORT0, 7), \
+    DEF_PIN(TCA6424_PORT0, 6), \
+    DEF_PIN(TCA6424_PORT0, 5), \
+    DEF_PIN(TCA6424_PORT0, 4), \
+    DEF_PIN(TCA6424_PORT0, 3), \
+    DEF_PIN(TCA6424_PORT0, 2), \
+    DEF_PIN(TCA6424_PORT0, 1) }
+
+#define LAYOUT_tkl_iso( \
     K000,       K001, K002, K003, K004, K005, K006, K007, K008, K009, K010, K011, K012,          K013, K014, K015, \
   \
 	K100, K101, K102, K103, K104, K105, K106, K107, K108, K109, K110, K111, K112, K113,          K114, K115, K116, \
@@ -24,7 +78,7 @@
 	{ K500,  K501,  K502, KC_NO, KC_NO, KC_NO,  K503, KC_NO,  K504,  K505,  K506,  K507,  K508, KC_NO, K509,KC_NO}, \
 }
 
-#define LAYOUT_tkl_ansi_tsangan( \
+#define LAYOUT_tkl_ansi( \
     K000,       K001, K002, K003, K004, K005, K006, K007, K008, K009, K010, K011, K012,          K013, K014, K015, \
   \
 	K100, K101, K102, K103, K104, K105, K106, K107, K108, K109, K110, K111, K112, K113,          K114, K115, K116, \

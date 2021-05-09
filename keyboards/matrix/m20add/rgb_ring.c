@@ -1,19 +1,5 @@
 /**
- * @file rgb_ring.c
- * @author astro
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * rgb_ring.c
  */
 
 #include "rgb_ring.h"
@@ -23,6 +9,7 @@
 #include "rgblight.h"
 #include "issi/is31fl3731.h"
 #include "i2c_master.h"
+#include "rgb_effects.h"
 
 
 #ifndef RGBLIGHT_ENABLE
@@ -101,18 +88,7 @@ typedef struct {
     bool    led_clear;
 } rgb_ring_t;
 
-static rgb_ring_t rgb_ring = {
-    .state          = RING_STATE_INIT,
-    .effect         = RING_EFFECT_1,
-    .speed          = 10,
-    .outer_index    = 0,
-    .inner_index    = 0,
-    .effect_count   = 0,
-    .led_begin      = RING_OUTER_BEGIN,
-    .led_end        = RING_OUTER_END,
-    .led_forward    = true,
-    .led_clear      = false,
-};
+static rgb_ring_t rgb_ring;
 
 static void rgb_ring_reset(void)
 {
@@ -357,20 +333,56 @@ static void custom_effects(void)
     effect_funcs[rgb_ring.effect]();
 }
 
+void effects_set_color(uint8_t index, uint8_t hue, uint8_t sat, uint8_t val)
+{
+    HSV h = {hue, sat, val};
+    RGB c = hsv_to_rgb(h);
+    IS31FL3731_set_color(RING_INNER_BEGIN + index, c.r, c.g, c.b);
+}
+
+void effects_set_color_all(uint8_t hue, uint8_t sat, uint8_t val)
+{
+    HSV h = {hue, sat, val};
+    RGB c = hsv_to_rgb(h);
+
+    for (int i = 0; i < RING_INNER_SIZE; i++) {
+        IS31FL3731_set_color(RING_INNER_BEGIN+i, c.r, c.g, c.b);
+    }
+}
+
 void rgblight_call_driver(LED_TYPE *start_led, uint8_t num_leds)
 {
     if (rgb_ring.state != RING_STATE_QMK) {
         return;
     }
 
+    //ws2812_setleds(start_led, num_leds);
     for (uint8_t i = 0; i < num_leds; i++) {
         IS31FL3731_set_color(i, start_led[i].r, start_led[i].g, start_led[i].b);
     }
 }
 
+void i2c_init(void)
+{
+    static bool initialized = false;
+    if (initialized) {
+        return;
+    } else {
+        initialized = true;
+    }
+
+    // Try releasing special pins for a short time
+    palSetPadMode(I2C1_SCL_BANK, I2C1_SCL, PAL_MODE_INPUT);
+    palSetPadMode(I2C1_SDA_BANK, I2C1_SDA, PAL_MODE_INPUT);
+
+    chThdSleepMilliseconds(10);
+    palSetPadMode(I2C1_SCL_BANK, I2C1_SCL, PAL_MODE_ALTERNATE(I2C1_SCL_PAL_MODE) | PAL_STM32_OTYPE_OPENDRAIN);
+    palSetPadMode(I2C1_SDA_BANK, I2C1_SDA, PAL_MODE_ALTERNATE(I2C1_SDA_PAL_MODE) | PAL_STM32_OTYPE_OPENDRAIN);
+}
 
 void rgb_ring_init(void)
 {
+    rgblight_init();
     i2c_init();
     IS31FL3731_init(DRIVER_ADDR_1);
     for (int index = 0; index < DRIVER_LED_TOTAL; index++) {
@@ -378,6 +390,19 @@ void rgb_ring_init(void)
         IS31FL3731_set_led_control_register(index, enabled, enabled, enabled);
     }
     IS31FL3731_update_led_control_registers(DRIVER_ADDR_1, 0);
+
+    rgb_ring.state        = RING_STATE_INIT,
+    rgb_ring.effect       = RING_EFFECT_1,
+    rgb_ring.speed        = 10,
+    rgb_ring.outer_index  = 0,
+    rgb_ring.inner_index  = 0,
+    rgb_ring.effect_count = 0,
+    rgb_ring.led_begin    = RING_OUTER_BEGIN,
+    rgb_ring.led_end      = RING_OUTER_END,
+    rgb_ring.led_forward  = true,
+    rgb_ring.led_clear    = false,
+
+    rgb_effects_init();
 }
 
 void rgb_ring_task(void)
@@ -388,6 +413,7 @@ void rgb_ring_task(void)
             break;
         case RING_STATE_QMK: // qmk effects
             //rgblight_task();
+            rgb_effects_task();
             break;
         case RING_STATE_CUSTOM: // custom effects
             custom_effects();
@@ -444,11 +470,41 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record)
                     rgb_ring.state = RING_STATE_CUSTOM;
                     rgb_ring_reset();
                     return false;
-                } else if (rgb_ring.state == RING_STATE_CUSTOM) {
+                } if (rgb_ring.state == RING_STATE_CUSTOM) {
                     rgb_ring.state = RING_STATE_QMK;
                     return false;
                 }
                 break;
+            case KC_F13:
+                rgb_effects_toggle();
+                return false;
+            case KC_F14:
+                rgb_effects_inc_mode();
+                return false;
+            case KC_F15:
+                rgb_effects_inc_hue();
+                return false;
+            case KC_F16:
+                rgb_effects_inc_sat();
+                return false;
+            case KC_F17:
+                rgb_effects_inc_val();
+                return false;
+            case KC_F18:
+                rgb_effects_dec_hue();
+                return false;
+            case KC_F19:
+                rgb_effects_dec_sat();
+                return false;
+            case KC_F20:
+                rgb_effects_dec_val();
+                return false;
+            case KC_F21:
+                rgb_effects_inc_speed();
+                return false;
+            case KC_F22:
+                rgb_effects_dec_speed();
+                return false;
             default:
                 break;
         }
