@@ -52,7 +52,11 @@
 #    include "qmk_midi.h"
 #endif
 #ifdef STM32_EEPROM_ENABLE
+#ifdef EEPROM_EMU_STM32F411xE
+#    include "eeprom_stm32f411.h"
+#else
 #    include "eeprom_stm32.h"
+#endif
 #endif
 #ifdef EEPROM_DRIVER
 #    include "eeprom_driver.h"

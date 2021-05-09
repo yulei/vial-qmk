@@ -6,7 +6,11 @@
 
 #ifdef STM32_EEPROM_ENABLE
 #    include <hal.h>
+#ifdef EEPROM_EMU_STM32F411xE
+#    include "eeprom_stm32f411.h"
+#else
 #    include "eeprom_stm32.h"
+#endif
 #endif
 
 #if defined(EEPROM_DRIVER)
