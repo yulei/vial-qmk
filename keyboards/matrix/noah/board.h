@@ -23,14 +23,10 @@
 #define BOARD_H
 
 /*
- * Setup for Matrix M65 board.
- */
-
-/*
  * Board identifier.
  */
 #define BOARD_MATRIX_NOAH
-#define BOARD_NAME                  "Matrix noah65 keyboard"
+#define BOARD_NAME                  "Matrix 8XV2.0 ADD keyboard"
 #define BOARD_OTG_NOVBUSSENS
 
 /*
@@ -213,39 +209,6 @@
 #define GPIOI_PIN13                 13U
 #define GPIOI_PIN14                 14U
 #define GPIOI_PIN15                 15U
-
-/*
- * IO lines assignments.
- */
-#define LINE_ROW_1                  PAL_LINE(GPIOB, 0U)
-#define LINE_ROW_2                  PAL_LINE(GPIOA, 1U)
-#define LINE_ROW_3                  PAL_LINE(GPIOC, 14U)
-#define LINE_ROW_4                  PAL_LINE(GPIOC, 13U)
-#define LINE_ROW_5                  PAL_LINE(GPIOA, 0U)
-
-#define LINE_COL_1                  PAL_LINE(GPIOC, 15U)
-#define LINE_COL_2                  PAL_LINE(GPIOB, 10U)
-#define LINE_COL_3                  PAL_LINE(GPIOB, 7U)
-#define LINE_COL_4                  PAL_LINE(GPIOB, 6U)
-#define LINE_COL_5                  PAL_LINE(GPIOB, 5U)
-#define LINE_COL_6                  PAL_LINE(GPIOB, 4U)
-#define LINE_COL_7                  PAL_LINE(GPIOA, 15U)
-#define LINE_COL_8                  PAL_LINE(GPIOA, 10U)
-#define LINE_COL_9                  PAL_LINE(GPIOA, 9U)
-#define LINE_COL_10                 PAL_LINE(GPIOA, 8U)
-#define LINE_COL_11                 PAL_LINE(GPIOB, 15U)
-#define LINE_COL_12                 PAL_LINE(GPIOB, 14U)
-#define LINE_COL_13                 PAL_LINE(GPIOB, 13U)
-#define LINE_COL_14                 PAL_LINE(GPIOB, 12U)
-#define LINE_COL_15                 PAL_LINE(GPIOB, 2U)
-
-// u2u lines
-#define LINE_U2U_RST                PAL_LINE(GPIOA, 2U)
-#define LINE_U2U_IRQ                PAL_LINE(GPIOA, 3U)
-#define LINE_U2U_CS                 PAL_LINE(GPIOA, 4U)
-#define LINE_U2U_SCK                PAL_LINE(GPIOA, 5U)
-#define LINE_U2U_MISO               PAL_LINE(GPIOA, 6U)
-#define LINE_U2U_MOSI               PAL_LINE(GPIOA, 7U)
 
 /*
  * I/O ports initial setup, this configuration is established soon after reset

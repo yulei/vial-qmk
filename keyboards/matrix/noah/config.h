@@ -5,16 +5,15 @@
 
 #pragma once
 
-#define EARLY_INIT_PERFORM_BOOTLOADER_JUMP TRUE
-
-/* USB Device descriptor parameter */
+// USB Device descriptor parameter
 #define VENDOR_ID  0x4D58   // MX
 #define PRODUCT_ID 0x0065   // noah 65
 #define DEVICE_VER 0x0001
 #define MANUFACTURER matrix
 #define PRODUCT NOAH
+#define DESCRIPTION 65% keybaord of the Matrix abel family
 
-/* key matrix size */
+// key matrix
 #define MATRIX_ROWS 5
 #define MATRIX_COLS 15
 
@@ -30,7 +29,6 @@
 #define I2C1_SDA 9
 #define I2C1_CLOCK_SPEED 400000
 #define I2C1_DUTY_CYCLE FAST_DUTY_CYCLE_2
-#define PAL_MODE_STM32_ALTERNATE_OPENDRAIN (PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN)
 
 // rgb matrix setting
 #define DRIVER_ADDR_1 0b1110100
@@ -45,7 +43,7 @@
 #define RGB_DI_PIN B1
 #define RGBLIGHT_ANIMATIONS
 
-// tapping setting
-//#define TAPPING_TERM 200
-//#define RETRO_TAPPING
-//#define PERMISSIVE_HOLD
+#define RGB_MATRIX_DISABLE_KEYCODES
+
+#define VIAL_INSECURE
+#define VIAL_KEYBOARD_UID {0xFD, 0x18, 0xB5, 0x4A, 0x99, 0x22, 0x3C, 0xC9}

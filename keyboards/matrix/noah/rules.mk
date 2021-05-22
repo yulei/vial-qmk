@@ -20,15 +20,13 @@ CONSOLE_ENABLE = no         # Console for debug
 COMMAND_ENABLE = no         # Commands for debug and configuration
 NKRO_ENABLE = no            # USB Nkey Rollover
 NO_USB_STARTUP_CHECK = yes	# Disable initialization only when usb is plugged in
-
+RGBLIGHT_ENABLE = yes
 RGB_MATRIX_ENABLE = yes
 RGB_MATRIX_DRIVER = IS31FL3731
+CUSTOM_MATRIX = lite
 
-RGBLIGHT_ENABLE = yes
-RGBLIGHT_CUSTOM_DRIVER = yes
-
-CUSTOM_MATRIX = yes
 # project specific files
-SRC += ws2812.c matrix.c
+SRC += matrix.c
 
-LAYOUTS = 65_iso_blocker
+
+
