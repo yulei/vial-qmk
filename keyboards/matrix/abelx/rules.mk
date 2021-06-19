@@ -26,4 +26,5 @@ RGBLIGHT_ENABLE = yes
 CUSTOM_MATRIX = lite
 # project specific files
 SRC += matrix.c tca6424.c aw9523b.c rgb_effects.c
+#SRC += matrix.c tca6424.c is31fl3236.c rgb_effects.c
 QUANTUM_LIB_SRC += i2c_master.c

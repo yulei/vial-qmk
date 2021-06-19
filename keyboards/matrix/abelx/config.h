@@ -32,6 +32,7 @@
 
 
 // rgb light setting
+//#define RGBLED_NUM 7
 #define RGBLED_NUM 4
 #define RGB_DI_PIN B4
 #define RGBLIGHT_ANIMATIONS
@@ -39,6 +40,8 @@
 
 #define AW9523B_RGB_NUM 4
 
+#define DRIVER_LED_TOTAL 7
+#define IS31FL3236_ADDR 0x78
 #define EARLY_INIT_PERFORM_BOOTLOADER_JUMP FALSE
 
 #define VIAL_INSECURE

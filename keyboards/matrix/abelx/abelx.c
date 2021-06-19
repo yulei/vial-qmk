@@ -5,6 +5,7 @@
 #include "abelx.h"
 #include "tca6424.h"
 #include "aw9523b.h"
+#include "is31fl3236.h"
 #include "rgb_effects.h"
 
 void set_pin(uint16_t pin)
@@ -35,23 +36,33 @@ uint8_t read_pin(uint16_t pin)
 extern rgblight_config_t rgblight_config;
 
 LED_TYPE top_leds[RGBLED_NUM];
-
+#if 1
 const aw9523b_led g_aw9523b_leds[AW9523B_RGB_NUM] = {
     {AW9523B_P12_PWM, AW9523B_P11_PWM, AW9523B_P10_PWM},
     {AW9523B_P01_PWM, AW9523B_P00_PWM, AW9523B_P13_PWM},
     {AW9523B_P04_PWM, AW9523B_P03_PWM, AW9523B_P02_PWM},
     {AW9523B_P07_PWM, AW9523B_P06_PWM, AW9523B_P05_PWM},
 };
-
+#else
+const is31_led g_is31_leds[DRIVER_LED_TOTAL] = {
+    {0, OUT_36, OUT_35, OUT_34},
+    {0, OUT_33, OUT_32, OUT_31},
+    {0, OUT_30, OUT_29, OUT_28},
+    {0, OUT_27, OUT_26, OUT_25},
+    {0, OUT_24, OUT_23, OUT_22},
+    {0, OUT_21, OUT_20, OUT_19},
+    {0, OUT_18, OUT_17, OUT_16},
+};
+#endif
 void rgblight_call_driver(LED_TYPE *start_led, uint8_t num_leds)
 {
-    uint8_t num = num_leds < AW9523B_RGB_NUM ? num_leds : AW9523B_RGB_NUM;
-    for (int i = 0; i < num; i++) {
+    for (int i = 0; i < num_leds; i++) {
         aw9523b_set_color(i, start_led[i].r, start_led[i].g, start_led[i].b);
+        //IS31FL3236_set_color(i, start_led[i].r, start_led[i].g, start_led[i].b);
     }
 
-    ws2812_setleds(top_leds, RGBLED_NUM);
-    //ws2812_setleds(start_led, num_leds);
+    //ws2812_setleds(top_leds, RGBLED_NUM);
+    ws2812_setleds(start_led, num_leds);
 }
 
 void effects_set_color(uint8_t index, uint8_t hue, uint8_t sat, uint8_t val)
@@ -142,6 +153,7 @@ void matrix_init_user(void) { }
 void matrix_init_kb(void) {
 #ifdef RGBLIGHT_ENABLE
     aw9523b_init(AW9523B_ADDR);
+    //IS31FL3236_init(IS31FL3236_ADDR);
     rgb_effects_init();
 #endif
     matrix_init_user();
@@ -154,6 +166,7 @@ void matrix_scan_user(void) { }
 void matrix_scan_kb(void) {
 #ifdef RGBLIGHT_ENABLE
     aw9523b_update_pwm_buffers(AW9523B_ADDR);
+    //IS31FL3236_update_pwm_buffers(IS31FL3236_ADDR);
     rgb_effects_task();
 #endif
     matrix_scan_user();
