@@ -17,4 +17,4 @@
 
 #include "quantum.h"
 
-#define LAYOUT( K01, K02, K03, K04) { { K01, K02, K03, K04} }	
+#define LAYOUT( K01, K02, K03, K04, K05, K06, K07, K08) { { K01, K02, K03, K04, K05, K06, K07, K08} }	

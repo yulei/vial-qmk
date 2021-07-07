@@ -26,9 +26,9 @@
 
 /* key matrix size */
 #define MATRIX_ROWS 1
-#define MATRIX_COLS 4
+#define MATRIX_COLS 8
 
-#define DIRECT_PINS { { E6, B3, B1, B2} }
+#define DIRECT_PINS { { B0, E6, F0, F1, F4, F5, F6, B6} }
 
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
 #define DEBOUNCE 5
