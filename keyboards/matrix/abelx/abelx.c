@@ -8,6 +8,7 @@
 #include "is31fl3236.h"
 #include "rgb_effects.h"
 
+#define FOR_ME  1
 void set_pin(uint16_t pin)
 {
     uint8_t data = tca6424_read_port(GET_PORT(pin));
@@ -36,14 +37,7 @@ uint8_t read_pin(uint16_t pin)
 extern rgblight_config_t rgblight_config;
 
 LED_TYPE top_leds[RGBLED_NUM];
-#if 1
-const aw9523b_led g_aw9523b_leds[AW9523B_RGB_NUM] = {
-    {AW9523B_P12_PWM, AW9523B_P11_PWM, AW9523B_P10_PWM},
-    {AW9523B_P01_PWM, AW9523B_P00_PWM, AW9523B_P13_PWM},
-    {AW9523B_P04_PWM, AW9523B_P03_PWM, AW9523B_P02_PWM},
-    {AW9523B_P07_PWM, AW9523B_P06_PWM, AW9523B_P05_PWM},
-};
-#else
+#if FOR_ME
 const is31_led g_is31_leds[DRIVER_LED_TOTAL] = {
     {0, OUT_36, OUT_35, OUT_34},
     {0, OUT_33, OUT_32, OUT_31},
@@ -53,12 +47,22 @@ const is31_led g_is31_leds[DRIVER_LED_TOTAL] = {
     {0, OUT_21, OUT_20, OUT_19},
     {0, OUT_18, OUT_17, OUT_16},
 };
+#else
+const aw9523b_led g_aw9523b_leds[AW9523B_RGB_NUM] = {
+    {AW9523B_P12_PWM, AW9523B_P11_PWM, AW9523B_P10_PWM},
+    {AW9523B_P01_PWM, AW9523B_P00_PWM, AW9523B_P13_PWM},
+    {AW9523B_P04_PWM, AW9523B_P03_PWM, AW9523B_P02_PWM},
+    {AW9523B_P07_PWM, AW9523B_P06_PWM, AW9523B_P05_PWM},
+};
 #endif
 void rgblight_call_driver(LED_TYPE *start_led, uint8_t num_leds)
 {
     for (int i = 0; i < num_leds; i++) {
+        #if FOR_ME
+        IS31FL3236_set_color(i, start_led[i].r, start_led[i].g, start_led[i].b);
+        #else
         aw9523b_set_color(i, start_led[i].r, start_led[i].g, start_led[i].b);
-        //IS31FL3236_set_color(i, start_led[i].r, start_led[i].g, start_led[i].b);
+        #endif
     }
 
     //ws2812_setleds(top_leds, RGBLED_NUM);
@@ -152,8 +156,11 @@ void matrix_init_user(void) { }
 
 void matrix_init_kb(void) {
 #ifdef RGBLIGHT_ENABLE
+    #if FOR_ME
+    IS31FL3236_init(IS31FL3236_ADDR);
+    #else
     aw9523b_init(AW9523B_ADDR);
-    //IS31FL3236_init(IS31FL3236_ADDR);
+    #endif
     rgb_effects_init();
 #endif
     matrix_init_user();
@@ -165,8 +172,11 @@ void matrix_scan_user(void) { }
 
 void matrix_scan_kb(void) {
 #ifdef RGBLIGHT_ENABLE
+    #if FOR_ME
+    IS31FL3236_update_pwm_buffers(IS31FL3236_ADDR);
+    #else
     aw9523b_update_pwm_buffers(AW9523B_ADDR);
-    //IS31FL3236_update_pwm_buffers(IS31FL3236_ADDR);
+    #endif
     rgb_effects_task();
 #endif
     matrix_scan_user();
