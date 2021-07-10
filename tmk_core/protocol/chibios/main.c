@@ -51,6 +51,7 @@
 #ifdef MIDI_ENABLE
 #    include "qmk_midi.h"
 #endif
+<<<<<<< HEAD
 #ifdef STM32_EEPROM_ENABLE
 #ifdef EEPROM_EMU_STM32F411xE
 #    include "eeprom_stm32f411.h"
@@ -61,6 +62,8 @@
 #ifdef EEPROM_DRIVER
 #    include "eeprom_driver.h"
 #endif
+=======
+>>>>>>> upstream/vial
 #include "suspend.h"
 #include "wait.h"
 
@@ -153,13 +156,6 @@ int main(void) {
     /* ChibiOS/RT init */
     halInit();
     chSysInit();
-
-#ifdef STM32_EEPROM_ENABLE
-    EEPROM_Init();
-#endif
-#ifdef EEPROM_DRIVER
-    eeprom_driver_init();
-#endif
 
     // TESTING
     // chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
@@ -274,7 +270,6 @@ int main(void) {
 #endif
 
         // Run housekeeping
-        housekeeping_task_kb();
-        housekeeping_task_user();
+        housekeeping_task();
     }
 }
