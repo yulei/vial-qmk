@@ -8,7 +8,6 @@
 #include "is31fl3236.h"
 #include "rgb_effects.h"
 
-#define FOR_ME  1
 void set_pin(uint16_t pin)
 {
     uint8_t data = tca6424_read_port(GET_PORT(pin));
@@ -46,6 +45,10 @@ const is31_led g_is31_leds[DRIVER_LED_TOTAL] = {
     {0, OUT_24, OUT_23, OUT_22},
     {0, OUT_21, OUT_20, OUT_19},
     {0, OUT_18, OUT_17, OUT_16},
+    {0, OUT_15, OUT_14, OUT_13},
+    {0, OUT_12, OUT_11, OUT_10},
+    {0, OUT_9, OUT_8, OUT_7},
+    {0, OUT_6, OUT_5, OUT_4},
 };
 #else
 const aw9523b_led g_aw9523b_leds[AW9523B_RGB_NUM] = {

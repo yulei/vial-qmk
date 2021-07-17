@@ -30,17 +30,22 @@
 #define I2C1_CLOCK_SPEED 400000
 #define I2C1_DUTY_CYCLE FAST_DUTY_CYCLE_2
 
+#define FOR_ME  0
 
 // rgb light setting
-//#define RGBLED_NUM 7
+#if FOR_ME
+#define RGBLED_NUM 11
+#else
 #define RGBLED_NUM 4
+#endif
 #define RGB_DI_PIN B4
 #define RGBLIGHT_ANIMATIONS
+
 #define EFFECTS_LED_NUM RGBLED_NUM
 
 #define AW9523B_RGB_NUM 4
 
-#define DRIVER_LED_TOTAL 7
+#define DRIVER_LED_TOTAL 11
 #define IS31FL3236_ADDR 0x78
 #define EARLY_INIT_PERFORM_BOOTLOADER_JUMP FALSE
 
