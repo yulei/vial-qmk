@@ -1,7 +1,7 @@
 /**
  * @file n6.c
  *
-    Copyright 2021 astro <yuleiz@gmail.com>
+    Copyright 2021 astro
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,6 +20,178 @@
 #include "n6.h"
 #include "i2c_master.h"
 #include "issi/is31fl3731.h"
+
+
+enum {
+    SELF_TESTING,
+    CAPS_ALERT,
+    NORMAL,
+};
+
+enum {
+    ST_STAGE_1,
+    ST_STAGE_2,
+    ST_STAGE_3,
+};
+
+// alert state update interval
+#define ALERT_INTERVAL      1000
+// self testing state update interval
+#define ST_INTERVAL         100
+// self testing start index
+#define ST_DEFAULT_INDEX    15
+// self testing stage delay
+#define ST_STAGE_DELAY      10
+// self testing stage cycle count
+#define ST_STAGE_COUNT      4
+// self testing stage end duration
+#define ST_END_DURATION     10
+
+// yellow color
+#define ST_R    0xFF
+#define ST_G    0xFF
+#define ST_B    0x00
+
+#ifdef RGBLIGHT_ENABLE
+extern rgblight_config_t rgblight_config;
+
+typedef struct {
+    uint8_t state;
+    uint8_t testing;
+    bool    alert;
+    uint8_t index;
+    uint8_t delay;
+    uint8_t count;
+    bool    dir;
+    uint8_t duration;
+    uint16_t ticks;
+} rgb_state_t;
+
+static rgb_state_t rgb_state = {
+    .state = //NORMAL,
+    SELF_TESTING,
+    .testing = ST_STAGE_1,
+    .ticks = 0,
+    .alert = false,
+    .index = ST_DEFAULT_INDEX,
+    .delay = ST_STAGE_DELAY,
+    .count = ST_STAGE_COUNT,
+    .dir = true,
+    .duration = ST_END_DURATION,
+};
+
+static void update_ticks(void)
+{
+    rgb_state.ticks = timer_read();
+}
+
+static void self_testing(void)
+{
+    if (timer_elapsed(rgb_state.ticks) < ST_INTERVAL) return;
+    HSV hsv;
+    hsv.h = rgblight_config.hue;
+    hsv.s = rgblight_config.sat;
+    hsv.v = rgblight_config.val;
+
+    RGB led = hsv_to_rgb(hsv);
+    switch(rgb_state.testing) {
+        case ST_STAGE_1:
+            if (rgb_state.index !=0 ) {
+                IS31FL3731_set_color_all(0, 0, 0);
+            }
+
+            if (rgb_state.index >= 1) {
+                for (int i = rgb_state.index-1; i < 32-rgb_state.index+1; i++) {
+                    IS31FL3731_set_color(i, led.r, led.g, led.b);
+                }
+                if (rgb_state.index==1) {
+                    rgb_state.index=0;
+                } else {
+                    rgb_state.index -= 2;
+                }
+            } else{
+                if (rgb_state.delay > 0) {
+                    rgb_state.delay--;
+                } else {
+                    // move to stage 2
+                    rgb_state.index = 2;
+                    rgb_state.testing = ST_STAGE_2;
+                }
+            }
+        break;
+        case ST_STAGE_2: {
+            // clear all
+            IS31FL3731_set_color_all(0, 0, 0);
+            // light left and right
+            IS31FL3731_set_color(0, led.r, led.g, led.b);
+            IS31FL3731_set_color(1, led.r, led.g, led.b);
+            IS31FL3731_set_color(30, led.r, led.g, led.b);
+            IS31FL3731_set_color(31, led.r, led.g, led.b);
+            if (rgb_state.dir) {
+                // left to right
+                for (int i = rgb_state.index; i < rgb_state.index+4; i++) {
+                    IS31FL3731_set_color(i, led.r, led.g, led.b);
+                }
+                rgb_state.index += 4;
+                if (rgb_state.index == 30) {
+                    rgb_state.dir = !rgb_state.dir;
+                    rgb_state.count--;
+                }
+            } else {
+                // right to left
+                for (int i = rgb_state.index-4; i < rgb_state.index; i++) {
+                    IS31FL3731_set_color(i, led.r, led.g, led.b);
+                }
+                rgb_state.index -= 4;
+                if (rgb_state.index == 2) {
+                    rgb_state.dir = !rgb_state.dir;
+                    rgb_state.count--;
+                }
+            }
+
+            if (rgb_state.count == 0) {
+                // move to stage 3
+                rgb_state.testing = ST_STAGE_3;
+                rgb_state.index = 0;
+                rgb_state.delay = ST_STAGE_DELAY;
+                rgb_state.duration = ST_END_DURATION;
+            }
+        }
+        break;
+        case ST_STAGE_3:
+            if (rgb_state.index != 16) {
+                IS31FL3731_set_color_all(0, 0, 0);
+            }
+
+            // light left and right
+            
+            if (rgb_state.index == 16) {
+                if (rgb_state.duration) {
+                    rgb_state.duration--;
+                } else {
+                    if (IS_HOST_LED_ON(USB_LED_CAPS_LOCK)) {
+                        rgb_state.state = CAPS_ALERT;
+                    } else {
+                        rgb_state.state = NORMAL;
+                        rgblight_set();
+                    }
+                }
+            } else {
+                // left
+                for (int i = 0; i < rgb_state.index+1; i++) {
+                    IS31FL3731_set_color(i, led.r, led.g, led.b);
+                }
+                // right
+                for (int i = 31; i > 31-rgb_state.index-1; i--) {
+                    IS31FL3731_set_color(i, led.r, led.g, led.b);
+                }
+                rgb_state.index ++;
+            }
+        break;
+    }
+
+    update_ticks();
+}
 
 const is31_led g_is31_leds[DRIVER_LED_TOTAL] = {
 /* Refer to IS31 manual for these locations
@@ -65,7 +237,7 @@ const is31_led g_is31_leds[DRIVER_LED_TOTAL] = {
     {0, C9_15,  C8_15,  C6_14},
     {0, C9_16,  C7_15,  C6_15},
 };
-
+#endif
 __attribute__((weak))
 void matrix_init_user(void) {}
 
@@ -74,39 +246,80 @@ void matrix_init_kb(void)
     // clear caps led
     setPinOutput(CAPS_PIN);
     writePinLow(CAPS_PIN);
-    
+#ifdef RGBLIGHT_ENABLE    
     i2c_init();
     IS31FL3731_init(DRIVER_ADDR_1);
     for (int index = 0; index < DRIVER_LED_TOTAL; index++) {
-        bool enabled = true;
-        IS31FL3731_set_led_control_register(index, enabled, enabled, enabled);
+        IS31FL3731_set_led_control_register(index, true, true, true);
     }
     IS31FL3731_update_led_control_registers(DRIVER_ADDR_1, 0);
+    update_ticks();
+#endif
     matrix_init_user();
 }
 
-__attribute__((weak))
-void matrix_scan_user(void) {}
-
-void matrix_scan_kb(void)
+#ifdef RGBLIGHT_ENABLE    
+void housekeeping_task_kb(void)
 {
+    if (rgb_state.state == SELF_TESTING) {
+        self_testing();
+    } else if (rgb_state.state == CAPS_ALERT) {
+        //gold 0xFF, 0xD9, 0x00
+        LED_TYPE led = {
+            .r = 0xFF,
+            .g = 0xD9, 
+            .b = 0x00,
+        };
+        if (rgb_state.alert) {
+            IS31FL3731_set_color_all(led.r, led.g, led.b);
+            ws2812_setleds(&led, 1);
+        } else {
+            led.r = 0;
+            led.g = 0;
+            led.b = 0;
+            IS31FL3731_set_color_all(0, 0, 0);
+            ws2812_setleds(&led, 1);
+        }
+
+        if (timer_elapsed(rgb_state.ticks) > ALERT_INTERVAL) {
+            rgb_state.alert = !rgb_state.alert;
+            update_ticks();
+        }
+    }
+
     IS31FL3731_update_pwm_buffers(DRIVER_ADDR_1,0);
-    matrix_scan_user();
+
+    housekeeping_task_user();
 }
 
 void rgblight_call_driver(LED_TYPE *start_led, uint8_t num_leds)
 {
-    for (uint8_t i = 0; i < 32; i++) {
+    if (rgb_state.state != NORMAL) return;
+
+    for (uint8_t i = 0; i < DRIVER_LED_TOTAL; i++) {
         IS31FL3731_set_color(i, start_led[i].r, start_led[i].g, start_led[i].b);
     }
-    ws2812_setleds(start_led+32, 1);
+    ws2812_setleds(start_led+DRIVER_LED_TOTAL, 1);
 }
+#endif
 
 bool led_update_kb(led_t led_state)
 {
     bool res = led_update_user(led_state);
     if (res) {
         writePin(CAPS_PIN, led_state.caps_lock);
+
+#ifdef RGBLIGHT_ENABLE    
+        if (rgb_state.state != SELF_TESTING) {
+            if (led_state.caps_lock) {
+                rgb_state.state = CAPS_ALERT;
+                update_ticks();
+            } else {
+                rgb_state.state = NORMAL;
+                rgblight_set();
+            }
+        }
+#endif
     }
     return res;
 }

@@ -1,7 +1,7 @@
 /**
  * config.h
  *
-    Copyright 2021 astro <yuleiz@gmail.com>
+    Copyright 2021 astro
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -65,3 +65,6 @@
 #define DRIVER_LED_TOTAL (DRIVER_1_LED_TOTAL)
 
 #define CAPS_PIN    F5
+
+//#define VIAL_INSECURE
+//#define VIAL_KEYBOARD_UID {0xEF, 0xA4, 0x32, 0x35, 0xAF, 0x01, 0xAD, 0x2A}
