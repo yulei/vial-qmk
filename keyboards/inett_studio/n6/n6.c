@@ -35,7 +35,7 @@ enum {
 };
 
 // alert state update interval
-#define ALERT_INTERVAL      1000
+#define ALERT_INTERVAL      600
 // self testing state update interval
 #define ST_INTERVAL         100
 // self testing start index
@@ -46,11 +46,6 @@ enum {
 #define ST_STAGE_COUNT      4
 // self testing stage end duration
 #define ST_END_DURATION     10
-
-// yellow color
-#define ST_R    0xFF
-#define ST_G    0xFF
-#define ST_B    0x00
 
 #ifdef RGBLIGHT_ENABLE
 extern rgblight_config_t rgblight_config;
