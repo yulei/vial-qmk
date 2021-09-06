@@ -21,8 +21,8 @@
 #include "config_common.h"
 
 /* USB Device descriptor parameter */
-#define VENDOR_ID       0x694E  //'iN'
-#define PRODUCT_ID      0x4E36  //'N6'
+#define VENDOR_ID       0x4E65   //'Ne'
+#define PRODUCT_ID      0x4E36   //'N6'
 #define DEVICE_VER      0x0001
 #define MANUFACTURER    Neson Design
 #define PRODUCT         N6 Keyboard
