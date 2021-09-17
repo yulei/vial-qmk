@@ -34,7 +34,7 @@ extern "C" {
 #elif defined(EEPROM_EMU_STM32F042x6)
 #    define STM32F042x6
 #    include "stm32f0xx.h"
-#elif defined(EEPROM_EMU_STM32F411xC)
+#elif defined(EEPROM_EMU_STM32F411xC) || defined(EEPROM_EMU_STM32F411xE)
 #    define EEPROM_EMU_STM32F4
 #    define STM32F411xE
 #    include "stm32f4xx.h"

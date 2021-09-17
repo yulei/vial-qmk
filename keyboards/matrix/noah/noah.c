@@ -42,11 +42,9 @@ void rgblight_call_driver(LED_TYPE *start_led, uint8_t num_leds)
         ws2812_setleds(start_led, num_leds);
     }
 }
-
 #endif
 
-void matrix_init_kb(void)
-{
+void matrix_init_kb(void) {
 #ifdef RGBLIGHT_ENABLE
     noah_led_mode = eeconfig_read_kb();
 #endif
@@ -54,7 +52,7 @@ void matrix_init_kb(void)
 }
 
 #ifdef RGB_MATRIX_ENABLE
-const is31_led g_is31_leds[DRIVER_LED_TOTAL] = {
+const is31_led __flash g_is31_leds[DRIVER_LED_TOTAL] = {
 /* Refer to IS31 manual for these locations
  *   driver
  *   |  R location
