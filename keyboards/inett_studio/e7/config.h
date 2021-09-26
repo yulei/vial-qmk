@@ -31,7 +31,14 @@
 #define MATRIX_ROWS 5
 #define MATRIX_COLS 16
 #define MATRIX_ROW_PINS { E6, B7, F6, F1, F0}
+#ifdef V1
+#define RGB_DI_PIN          D4
 #define MATRIX_COL_PINS { F7, B3, B2, B1, B0, F4, C7, C6, B6, B5, B4, D5, D2, D3, D7, D6}
+#else
+#define MATRIX_COL_PINS { F7, B0, B3, B1, B2, F4, C7, C6, B6, B5, B4, D7, D2, D3, D6, D4}
+#define RGB_DI_PIN          D5
+#endif
+
 #define UNUSED_PINS
 #define DIODE_DIRECTION COL2ROW
 
@@ -53,7 +60,6 @@
 //rgb light setting
 //#define RGBLIGHT_LIMIT_VAL 128
 #define RGBLED_NUM          38
-#define RGB_DI_PIN          D4
 #define RGBLIGHT_ANIMATIONS
 #define RGBLIGHT_HUE_STEP   8
 #define RGBLIGHT_SAT_STEP   8

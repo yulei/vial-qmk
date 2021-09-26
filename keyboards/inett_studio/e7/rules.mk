@@ -19,4 +19,4 @@ NKRO_ENABLE = yes           # USB Nkey Rollover
 BACKLIGHT_ENABLE = no       # Enable keyboard backlight functionality
 RGBLIGHT_ENABLE = yes		# Enable keyboard RGB underglow
 
-SRC += i2c_master.c issi/is31fl3731.c
+SRC += i2c_master.c led/issi/is31fl3731.c
