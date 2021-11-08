@@ -19,7 +19,7 @@
 
 #include "n6.h"
 #include "i2c_master.h"
-#include "issi/is31fl3731.h"
+#include "led/issi/is31fl3731.h"
 
 
 enum {
@@ -188,7 +188,7 @@ static void self_testing(void)
     update_ticks();
 }
 
-const is31_led g_is31_leds[DRIVER_LED_TOTAL] = {
+const is31_led __flash g_is31_leds[DRIVER_LED_TOTAL] = {
 /* Refer to IS31 manual for these locations
  *   driver
  *   |  R location
