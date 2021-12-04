@@ -9,7 +9,7 @@
 #include "eeconfig.h"
 #include "eeprom.h"
 
-#define EECONFIG_EFFECTS EECONFIG_KEYBOARD
+//#define EECONFIG_EFFECTS (uint32_t *)64
 
 #define DELAY_MIN   0
 #define DELAY_DEFAULT 1500
@@ -269,6 +269,9 @@ void rgb_effects_init(void)
     } else {
         //effects_config.raw = eeprom_read_dword(EECONFIG_EFFECTS);
         effects_config.raw = eeconfig_read_kb();
+        if (effects_config.sat == 0 && effects_config.val == 0) {
+            effects_update_default();
+        }
     }
 
     effects_state.counter       = 0;
