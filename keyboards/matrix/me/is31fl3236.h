@@ -46,8 +46,6 @@ void IS31FL3236_set_color_all(uint8_t red, uint8_t green, uint8_t blue);
 // If the buffer is dirty, it will update the driver with the buffer.
 void IS31FL3236_update_pwm_buffers(uint8_t addr);
 
-// check if available
-bool IS31FL3236_available(void);
 
 #define OUT_1 0x01
 #define OUT_2 0x02
