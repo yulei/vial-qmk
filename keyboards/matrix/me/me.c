@@ -35,11 +35,10 @@ const is31_led g_is31_leds[DRIVER_LED_TOTAL] = {
 
 void effects_set_color(uint8_t index, uint8_t hue, uint8_t sat, uint8_t val)
 {
-    if (index >= DRIVER_LED_TOTAL) return;
+    if (index >= DRIVER_LED_TOTAL || !IS31FL3236_available()) return;
 
     HSV hsv = {hue, sat, val};
     RGB rgb = hsv_to_rgb(hsv);
-    //IS31FL3236_set_color(index, 0xFF, 0xFF, 0xFF);
     IS31FL3236_set_color(index, rgb.r, rgb.g, rgb.b);
 }
 
@@ -53,7 +52,7 @@ void effects_set_color_all(uint8_t hue, uint8_t sat, uint8_t val)
 static bool top_led = true;
 bool process_record_kb(uint16_t keycode, keyrecord_t *record)
 {
-    if (top_led) return process_record_user(keycode, record);
+    if (top_led || !IS31FL3236_available()) return process_record_user(keycode, record);
 
     if (record->event.pressed) {
         switch(keycode) {
@@ -104,13 +103,18 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record)
 void matrix_init_kb(void)
 {
     IS31FL3236_init(IS31FL3236_ADDR);
-    rgb_effects_init();
+    if (IS31FL3236_available()) {
+        rgb_effects_init();
+    }
+
     matrix_init_user();
 }
 
 void housekeeping_task_kb(void)
 {
-    rgb_effects_task();
-    IS31FL3236_update_pwm_buffers(IS31FL3236_ADDR);
+    if (IS31FL3236_available()) {
+        rgb_effects_task();
+        IS31FL3236_update_pwm_buffers(IS31FL3236_ADDR);
+    }
     housekeeping_task_user();
 }

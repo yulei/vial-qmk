@@ -68,7 +68,7 @@
 #define LED_SCROLL_LOCK_PIN D2
 
 // rgb effects
-#define EFFECTS_LED_NUM     12 
+#define EFFECTS_LED_NUM     11 
 
 #define DRIVER_LED_TOTAL    12
 #define IS31FL3236_ADDR     0x78

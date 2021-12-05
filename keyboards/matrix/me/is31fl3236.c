@@ -58,12 +58,12 @@ bool    g_pwm_buffer_update_required = false;
 uint8_t g_led_control_registers[36] = {0};
 bool    g_led_control_registers_update_required = false;
 
-static bool is31fl3236_available = true;
+static bool s_is31fl3236_available = true;
 
 // check if available
-static bool driver_available(void)
+bool IS31FL3236_available(void)
 {
-    return is31fl3236_available;
+    return s_is31fl3236_available;
 }
 
 void IS31FL3236_write_pwm_buffer(uint8_t addr, uint8_t *pwm_buffer)
@@ -81,7 +81,7 @@ void IS31FL3236_init(uint8_t addr)
     // Reset 3236 to default state
     uint8_t data = 0;
     if(i2c_writeReg(addr, ISSI_REG_RESET, &data, 1, ISSI_TIMEOUT) != I2C_STATUS_SUCCESS) {
-        is31fl3236_available = false;
+        s_is31fl3236_available = false;
         return;
     }
 
@@ -93,7 +93,8 @@ void IS31FL3236_init(uint8_t addr)
 
     // turn on all LEDs in the LED control register
     for (int i = 0; i < 36; i++) {
-        g_led_control_registers[i] = 0x01;
+        //g_led_control_registers[i] = 0x01;
+        g_led_control_registers[i] = 0x07;
     }
     i2c_writeReg(addr, ISSI_REG_CONTROL, &g_led_control_registers[0], 36, ISSI_TIMEOUT);
 
@@ -109,7 +110,7 @@ void IS31FL3236_init(uint8_t addr)
 }
 
 void IS31FL3236_set_color(int index, uint8_t red, uint8_t green, uint8_t blue) {
-    if (!driver_available()) return;
+    if (!IS31FL3236_available()) return;
 
     if (index >= 0 && index < DRIVER_LED_TOTAL) {
         is31_led led = g_is31_leds[index];
@@ -122,7 +123,7 @@ void IS31FL3236_set_color(int index, uint8_t red, uint8_t green, uint8_t blue) {
 }
 
 void IS31FL3236_set_color_all(uint8_t red, uint8_t green, uint8_t blue) {
-    if (!driver_available()) return;
+    if (!IS31FL3236_available()) return;
 
     for (int i = 0; i < DRIVER_LED_TOTAL; i++) {
         IS31FL3236_set_color(i, red, green, blue);
@@ -130,7 +131,7 @@ void IS31FL3236_set_color_all(uint8_t red, uint8_t green, uint8_t blue) {
 }
 
 void IS31FL3236_update_pwm_buffers(uint8_t addr) {
-    if (!driver_available()) return;
+    if (!IS31FL3236_available()) return;
 
     if (g_pwm_buffer_update_required) {
         IS31FL3236_write_pwm_buffer(addr, &g_pwm_buffer[0]);
