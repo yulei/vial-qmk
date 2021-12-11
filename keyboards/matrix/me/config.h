@@ -47,6 +47,7 @@
 //#define NO_PRINT
 
 //rgb light setting
+//#define RGBLED_NUM          13
 #define RGBLED_NUM          4
 #define RGB_DI_PIN          E2
 #define RGBLIGHT_EFFECT_BREATHING
@@ -72,4 +73,9 @@
 
 #define DRIVER_LED_TOTAL    12
 #define IS31FL3236_ADDR     0x78
+
+//#define DRIVER_COUNT        1
+//#define DRIVER_LED_TOTAL    RGBLED_NUM
+//#define IS31FL3731_ADDR     0x74
+
 #define EARLY_INIT_PERFORM_BOOTLOADER_JUMP FALSE
