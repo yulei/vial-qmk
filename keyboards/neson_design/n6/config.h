@@ -50,18 +50,36 @@
 //#define NO_PRINT
 
 
+
+#define DRIVER_1_LED_TOTAL 32
+#define DRIVER_ADDR_1 0b1110100
+#define DRIVER_ADDR_2 0b1110111
+
+#ifdef DRIVER_ADDR_2
+#define DRIVER_2_LED_TOTAL 32
+#else
+#define DRIVER_2_LED_TOTAL 0
+#endif
+
+#ifdef DRIVER_ADDR_2
+#define DRIVER_COUNT 2
+#else
+#define DRIVER_COUNT 1
+#endif
+
+#define DRIVER_LED_TOTAL (DRIVER_1_LED_TOTAL+DRIVER_2_LED_TOTAL)
+
+#define LED_CAPS_LOCK_PIN   F5
+
 //rgb light setting
-//#define RGBLIGHT_LIMIT_VAL 128
+#ifdef DRIVER_ADDR_2
+#define RGBLED_NUM          65
+#else
 #define RGBLED_NUM          33
+#endif
 #define RGB_DI_PIN          B3
 #define RGBLIGHT_ANIMATIONS
 #define RGBLIGHT_HUE_STEP   8
 #define RGBLIGHT_SAT_STEP   8
 #define RGBLIGHT_VAL_STEP   8
-
-#define DRIVER_1_LED_TOTAL 32
-#define DRIVER_ADDR_1 0b1110100
-#define DRIVER_COUNT 1
-#define DRIVER_LED_TOTAL (DRIVER_1_LED_TOTAL)
-
-#define CAPS_PIN    F5
+//#define RGBLIGHT_LIMIT_VAL    192
