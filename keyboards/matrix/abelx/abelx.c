@@ -1,12 +1,33 @@
 /**
  * abelx.c
+<<<<<<< HEAD
+=======
+ *
+ * Copyright 2020 astro <yuleiz@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+>>>>>>> upstream/vial
  */
 
 #include "abelx.h"
 #include "tca6424.h"
 #include "aw9523b.h"
+<<<<<<< HEAD
 #include "is31fl3236.h"
 #include "rgb_effects.h"
+=======
+>>>>>>> upstream/vial
 
 void set_pin(uint16_t pin)
 {
@@ -28,11 +49,28 @@ uint8_t read_pin(uint16_t pin)
     return (data & (1<<GET_PIN(pin))) ? 1 : 0;
 }
 
+<<<<<<< HEAD
+=======
+void matrix_init_kb(void) {
+#ifdef RGBLIGHT_ENABLE
+    aw9523b_init(AW9523B_ADDR);
+#endif
+    matrix_init_user();
+}
+
+
+void housekeeping_task_kb(void) {
+#ifdef RGBLIGHT_ENABLE
+    aw9523b_update_pwm_buffers(AW9523B_ADDR);
+#endif
+}
+>>>>>>> upstream/vial
 
 #ifdef RGBLIGHT_ENABLE
 #include "rgblight.h"
 #include "i2c_master.h"
 
+<<<<<<< HEAD
 extern rgblight_config_t rgblight_config;
 
 LED_TYPE top_leds[RGBLED_NUM];
@@ -51,12 +89,15 @@ const is31_led g_is31_leds[DRIVER_LED_TOTAL] = {
     {0, OUT_6, OUT_5, OUT_4},
 };
 #else
+=======
+>>>>>>> upstream/vial
 const aw9523b_led g_aw9523b_leds[AW9523B_RGB_NUM] = {
     {AW9523B_P12_PWM, AW9523B_P11_PWM, AW9523B_P10_PWM},
     {AW9523B_P01_PWM, AW9523B_P00_PWM, AW9523B_P13_PWM},
     {AW9523B_P04_PWM, AW9523B_P03_PWM, AW9523B_P02_PWM},
     {AW9523B_P07_PWM, AW9523B_P06_PWM, AW9523B_P05_PWM},
 };
+<<<<<<< HEAD
 #endif
 void rgblight_call_driver(LED_TYPE *start_led, uint8_t num_leds)
 {
@@ -131,6 +172,18 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record)
         }
     }
     return process_record_user(keycode, record);
+=======
+
+void rgblight_call_driver(LED_TYPE *start_led, uint8_t num_leds)
+{
+    uint8_t num = num_leds < AW9523B_RGB_NUM ? num_leds : AW9523B_RGB_NUM;
+
+    ws2812_setleds(start_led, num);
+
+    for (int i = 0; i < num; i++) {
+        aw9523b_set_color(i, start_led[i].r, start_led[i].g, start_led[i].b);
+    }
+>>>>>>> upstream/vial
 }
 
 #endif
@@ -153,6 +206,7 @@ void shutdown_user(void)
     // set the magic number for resetting to the bootloader
     *(uint32_t *)(&(RTCD1.rtc->BKP0R)) = REBOOT_MAGIC;
 }
+<<<<<<< HEAD
 
 __attribute__((weak))
 void matrix_init_user(void) { }
@@ -184,3 +238,5 @@ void matrix_scan_kb(void) {
 #endif
     matrix_scan_user();
 }
+=======
+>>>>>>> upstream/vial

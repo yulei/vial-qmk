@@ -48,7 +48,7 @@
 
 #define SCROLL_DI_PIN       B0
 //rgb light setting
-#define RGBLED_NUM          7
+#define RGBLED_NUM          16
 #define RGB_DI_PIN          B7
 #define RGBLIGHT_ANIMATIONS
 #define RGBLIGHT_HUE_STEP   8

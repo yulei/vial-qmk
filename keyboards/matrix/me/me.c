@@ -15,6 +15,7 @@
  */
 
 #include "me.h"
+<<<<<<< HEAD
 
 #define FOR_ME 1
 #if FOR_ME
@@ -168,3 +169,5 @@ void housekeeping_task_kb(void)
     #endif
     housekeeping_task_user();
 }
+=======
+>>>>>>> upstream/vial

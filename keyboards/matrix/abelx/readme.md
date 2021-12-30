@@ -1,8 +1,14 @@
 # Matrix ABELX keyboard
 
+<<<<<<< HEAD
 Keyboard Maintainer: [astro](https://github.com/yulei)  
 Hardware Supported: Matrix ABELX keyboard
 Hardware Availability: 
+=======
+* Keyboard Maintainer: [astro](https://github.com/yulei)
+* Hardware Supported: Matrix ABELX keyboard
+* Hardware Availability: 
+>>>>>>> upstream/vial
 
 Make example for this keyboard (after setting up your build environment):
 

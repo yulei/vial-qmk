@@ -23,6 +23,8 @@
 #define DRIVER_1_ADDR       0x7E
 #define DRIVER_2_ADDR       0x78
 
+extern void scroll_setleds(LED_TYPE *ledarray, uint16_t number_of_leds);
+
 static void driver_init(void);
 static void driver_set_color(int index, uint8_t r, uint8_t g, uint8_t b);
 static void driver_set_color_all(uint8_t r, uint8_t g, uint8_t b);
@@ -61,6 +63,8 @@ static void driver_init(void)
 
     IS31FL3236_init(DRIVER_1_ADDR, 0);
     IS31FL3236_init(DRIVER_2_ADDR, 1);
+    LED_TYPE led = {0,0,0};
+    scroll_setleds(&led, 1);
 }
 
 HSV rgb2hsv(RGB rgb)
@@ -105,6 +109,7 @@ RGB tune_color(uint8_t r, uint8_t g, uint8_t b)
     tmp.s = (uint8_t)(s/255);
     return hsv_to_rgb(tmp);
 }
+
 static void driver_set_color(int index, uint8_t r, uint8_t g, uint8_t b)
 {
     is31_led led = g_is31_leds[index];
@@ -137,7 +142,6 @@ static void driver_set_color_all(uint8_t r, uint8_t g, uint8_t b)
     }
 }
 
-extern void scroll_setleds(LED_TYPE *ledarray, uint16_t number_of_leds);
 static void driver_flush(void)
 {
     IS31FL3733_update_pwm_buffers(DRIVER_0_ADDR, 0);

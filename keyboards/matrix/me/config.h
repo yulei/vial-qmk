@@ -47,7 +47,10 @@
 //#define NO_PRINT
 
 //rgb light setting
+<<<<<<< HEAD
 //#define RGBLED_NUM          13
+=======
+>>>>>>> upstream/vial
 #define RGBLED_NUM          4
 #define RGB_DI_PIN          E2
 #define RGBLIGHT_EFFECT_BREATHING
@@ -67,6 +70,7 @@
 // led pins
 #define LED_CAPS_LOCK_PIN   E6
 #define LED_SCROLL_LOCK_PIN D2
+<<<<<<< HEAD
 
 // rgb effects
 #define EFFECTS_LED_NUM     11 
@@ -79,3 +83,5 @@
 //#define IS31FL3731_ADDR     0x74
 
 #define EARLY_INIT_PERFORM_BOOTLOADER_JUMP FALSE
+=======
+>>>>>>> upstream/vial

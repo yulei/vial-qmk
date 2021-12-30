@@ -25,9 +25,14 @@
 #define DEBOUNCE    5
 
 // i2c setting
+<<<<<<< HEAD
 #define USE_I2CV1
 #define I2C1_SCL 8
 #define I2C1_SDA 9
+=======
+#define I2C1_SCL_PIN B8
+#define I2C1_SDA_PIN B9
+>>>>>>> upstream/vial
 #define I2C1_CLOCK_SPEED 400000
 #define I2C1_DUTY_CYCLE FAST_DUTY_CYCLE_2
 
