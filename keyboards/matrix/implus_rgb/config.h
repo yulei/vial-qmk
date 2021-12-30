@@ -1,7 +1,7 @@
 /**
  * config.h
  *
-  Copyright 2021 astro 
+  Copyright 2021 astro <yuleiz@gmail.com>
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 2 of the License, or
@@ -18,19 +18,19 @@
 #include "config_common.h"
 
 /* USB Device descriptor parameter */
-#define VENDOR_ID       0x4D58  // MX
-#define PRODUCT_ID      0x454D  // ME
+#define VENDOR_ID       0x4D58
+#define PRODUCT_ID      0x494D
 #define DEVICE_VER      0x0001
 #define MANUFACTURER    Matrix Lab
-#define PRODUCT         Matrix ME
+#define PRODUCT         IM Plus
 
 /* key matrix size */
 #define MATRIX_ROWS 6
 #define MATRIX_COLS 15
-#define MATRIX_ROW_PINS {D3, D5, D4, D6, B5, B4}
-#define MATRIX_COL_PINS {B7, B3, B2, B1, B0, F0, F1, F4, F5, F6, F7, C7, C6, B6, D7}
+#define MATRIX_ROW_PINS { E6, F0, F1, F4, F6, F5}
+#define MATRIX_COL_PINS { F7, C7, C6, B6, B5, B4, D7, D6, D4, D5, D3, D2, B3, B1, B2}
 #define UNUSED_PINS
-#define DIODE_DIRECTION COL2ROW
+#define DIODE_DIRECTION ROW2COL
 
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
 #define DEBOUNCE 5
@@ -46,36 +46,21 @@
 /* disable print */
 //#define NO_PRINT
 
+#define SCROLL_DI_PIN       B0
 //rgb light setting
-//#define RGBLED_NUM          13
-#define RGBLED_NUM          4
-#define RGB_DI_PIN          E2
-#define RGBLIGHT_EFFECT_BREATHING
-#define RGBLIGHT_EFFECT_RAINBOW_MOOD
-#define RGBLIGHT_EFFECT_RAINBOW_SWIRL
-#define RGBLIGHT_EFFECT_SNAKE
-#define RGBLIGHT_EFFECT_KNIGHT
-#define RGBLIGHT_EFFECT_CHRISTMAS
-#define RGBLIGHT_EFFECT_STATIC_GRADIENT
-#define RGBLIGHT_EFFECT_RGB_TEST
-#define RGBLIGHT_EFFECT_ALTERNATING
-#define RGBLIGHT_EFFECT_TWINKLE
+#define RGBLED_NUM          16
+#define RGB_DI_PIN          B7
+#define RGBLIGHT_ANIMATIONS
 #define RGBLIGHT_HUE_STEP   8
 #define RGBLIGHT_SAT_STEP   8
 #define RGBLIGHT_VAL_STEP   8
 
-// led pins
-#define LED_CAPS_LOCK_PIN   E6
-#define LED_SCROLL_LOCK_PIN D2
+#define DRIVER_LED_TOTAL    89
+#define DRIVER_COUNT        1
 
-// rgb effects
-#define EFFECTS_LED_NUM     11 
+#define VIAL_INSECURE
+#define VIAL_KEYBOARD_UID {0xBF, 0x6D, 0x15, 0xA1, 0xB0, 0x07, 0xE7, 0x20}
 
-#define DRIVER_LED_TOTAL    12
-#define IS31FL3236_ADDR     0x78
-
-//#define DRIVER_COUNT        1
-//#define DRIVER_LED_TOTAL    RGBLED_NUM
-//#define IS31FL3731_ADDR     0x74
-
-#define EARLY_INIT_PERFORM_BOOTLOADER_JUMP FALSE
+//#define RGB_MATRIX_MAXIMUM_BRIGHTNESS 64
+//#define RGB_MATRIX_TYPING_HEATMAP
+//#define RGB_MATRIX_KEYPRESSES
