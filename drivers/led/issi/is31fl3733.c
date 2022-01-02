@@ -172,7 +172,11 @@ void IS31FL3733_init(uint8_t addr, uint8_t sync) {
     // Set de-ghost pull-down resistors (CSx)
     IS31FL3733_write_register(addr, ISSI_REG_CSPULLUP, ISSI_CSPULLUP);
     // Set global current to maximum.
+    #ifdef IS31FL3733_CURRENT
+    IS31FL3733_write_register(addr, ISSI_REG_GLOBALCURRENT, IS31FL3733_CURRENT);
+    #else
     IS31FL3733_write_register(addr, ISSI_REG_GLOBALCURRENT, 0xFF);
+    #endif
     // Disable software shutdown.
     IS31FL3733_write_register(addr, ISSI_REG_CONFIGURATION, ((sync & 0b11) << 6) | ((ISSI_PWM_FREQUENCY & 0b111) << 3) | 0x01);
 
