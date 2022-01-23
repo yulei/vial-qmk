@@ -48,7 +48,7 @@
 
 #define SCROLL_DI_PIN       B0
 //rgb light setting
-#define RGBLED_NUM          7
+#define RGBLED_NUM          16
 #define RGB_DI_PIN          B7
 #define RGBLIGHT_ANIMATIONS
 #define RGBLIGHT_HUE_STEP   8
@@ -60,6 +60,10 @@
 
 #define VIAL_INSECURE
 #define VIAL_KEYBOARD_UID {0xBF, 0x6D, 0x15, 0xA1, 0xB0, 0x07, 0xE7, 0x20}
+
+#define IS31FL3731_ADDR     0x74
+//#define RGBLIGHT_DISABLE_KEYCODES
+#define RGB_MATRIX_DISABLE_KEYCODES
 
 //#define RGB_MATRIX_MAXIMUM_BRIGHTNESS 64
 //#define RGB_MATRIX_TYPING_HEATMAP

@@ -16,6 +16,7 @@
 
 #include "implus_rgb.h"
 #include "is31fl3236.h"
+#include "is31fl3731_imp.h"
 
 #ifdef RGB_MATRIX_ENABLE
 const is31_led __flash g_is31_leds[DRIVER_LED_TOTAL] = {
@@ -121,7 +122,7 @@ const is31_led __flash g_is31_leds[DRIVER_LED_TOTAL] = {
 
 // m12 led board
 #if 0
-    {4, C1_1,   C3_2,   C4_2},
+/*    {4, C1_1,   C3_2,   C4_2},
     {4, C1_2,   C2_2,   C4_3},
     {4, C1_3,   C2_3,   C3_3},
     {4, C1_4,   C2_4,   C3_4},
@@ -135,9 +136,28 @@ const is31_led __flash g_is31_leds[DRIVER_LED_TOTAL] = {
     {4, C9_3,   C8_3,   C7_3},
     {4, C9_4,   C8_4,   C7_4},
     {4, C9_5,   C8_5,   C7_5},
-    {4, C9_6,   C8_6,   C7_6},
-    {4, C9_7,   C8_7,   C6_6},
-    {4, C9_8,   C7_7,   C6_7},
+    */
+//    {4, C9_6,   C8_6,   C7_6},
+//    {4, C9_7,   C8_7,   C6_6},
+//    {4, C9_8,   C7_7,   C6_7},
+
+    {4, C1_9,   C3_10,  C4_10},
+    {4, C1_10,  C2_10,  C4_11},
+    {4, C1_11,  C2_11,  C3_11},
+    {4, C1_12,  C2_12,  C3_12},
+    {4, C1_13,  C2_13,  C3_13},
+    {4, C1_14,  C2_14,  C3_14},
+    {4, C1_15,  C2_15,  C3_15},
+    {4, C1_16,  C2_16,  C3_16},
+
+    {4, C9_9,   C8_9,   C7_9},
+    {4, C9_10,  C8_10,  C7_10},
+    {4, C9_11,  C8_11,  C7_11},
+    {4, C9_12,  C8_12,  C7_12},
+    {4, C9_13,  C8_13,  C7_13},
+    {4, C9_14,  C8_14,  C7_14},
+    {4, C9_15,  C8_15,  C6_14},
+    {4, C9_16,  C7_15,  C6_15},
 #endif
 };
 
@@ -175,3 +195,102 @@ led_config_t g_led_config = {
 };
 
 #endif
+
+#ifdef RGBLIGHT_ENABLE
+
+void rgblight_call_driver(LED_TYPE *start_led, uint8_t num_leds)
+{
+    #if 1
+    if (IS31FL3731_available())
+    {
+        for (int i = 0; i < RGBLED_NUM; i++) {
+            IS31FL3731_set_color(i, start_led[i].r, start_led[i].g, start_led[i].b);
+            //IS31FL3731_set_color(i, 0xFF, 0, 0);
+        }
+        //IS31FL3731_update_pwm_buffers(IS31FL3731_ADDR, 0);
+    }
+    else
+    #endif
+     {
+        ws2812_setleds(start_led, num_leds);
+    }
+}
+
+void housekeeping_task_kb(void)
+{
+    #if 1
+    if (IS31FL3731_available())
+    {
+        IS31FL3731_update_pwm_buffers(IS31FL3731_ADDR, 0);
+    }
+    housekeeping_task_user();
+    #endif
+}
+#endif
+
+//#if defined(RGB_MATRIX_ENABLE) && defined(RGBLIGHT_ENABLE)
+static bool top_led = true;
+bool process_record_kb(uint16_t keycode, keyrecord_t *record)
+{
+    if(!record->event.pressed) {
+        return process_record_user(keycode, record);
+    }
+
+    if (keycode == KC_F13) {
+        top_led = !top_led;
+        return false;
+    }
+
+    if (top_led) {
+        switch(keycode) {
+            case RGB_TOG:
+                //rgblight_toggle();
+                rgb_matrix_toggle();
+                return false;
+            case RGB_MODE_FORWARD:
+                //rgblight_step();
+                rgb_matrix_step();
+                return false;
+            case RGB_MODE_REVERSE:
+                //rgblight_step_reverse();
+                rgb_matrix_step_reverse();
+                return false;
+            case RGB_HUI:
+                //rgblight_increase_hue();
+                rgb_matrix_increase_hue();
+                return false;
+            case RGB_HUD:
+                //rgblight_decrease_hue();
+                rgb_matrix_decrease_hue();
+                return false;
+            case RGB_SAI:
+                //rgblight_increase_sat();
+                rgb_matrix_increase_sat();
+                return false;
+            case RGB_SAD:
+                //rgblight_decrease_sat();
+                rgb_matrix_decrease_sat();
+                return false;
+            case RGB_VAI:
+                //rgblight_increase_val();
+                rgb_matrix_increase_val();
+                return false;
+            case RGB_VAD:
+                //rgblight_decrease_val();
+                rgb_matrix_decrease_val();
+                return false;
+            case RGB_SPI:
+                //rgblight_increase_speed();
+                rgb_matrix_increase_speed();
+                return false;
+            case RGB_SPD:
+                //rgblight_decrease_speed();
+                rgb_matrix_decrease_speed();
+                return false;
+            default:
+                break;
+        }
+    }
+    return process_record_user(keycode, record);
+}
+//#endif

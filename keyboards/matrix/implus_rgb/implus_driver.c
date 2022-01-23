@@ -16,6 +16,7 @@
 
 #include "rgb_matrix.h"
 #include "is31fl3236.h"
+#include "is31fl3731_imp.h"
 #include "ws2812.h"
 #include "i2c_master.h"
 
@@ -61,6 +62,13 @@ static void driver_init(void)
 
     IS31FL3236_init(DRIVER_1_ADDR, 0);
     IS31FL3236_init(DRIVER_2_ADDR, 1);
+
+    IS31FL3731_init(IS31FL3731_ADDR);
+    for (int i = 0; i < 13; i++) {
+        bool enabled = true;
+        IS31FL3731_set_led_control_register(i, enabled, enabled, enabled);
+    }
+    IS31FL3731_update_led_control_registers(IS31FL3731_ADDR, 0);
 }
 
 HSV rgb2hsv(RGB rgb)

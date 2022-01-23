@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "is31fl3731.h"
+#include "is31fl3731_imp.h"
 #include "i2c_master.h"
 #include "wait.h"
 
@@ -54,18 +54,49 @@
 #endif
 
 // Transfer buffer for TWITransmitData()
-uint8_t g_twi_transfer_buffer[20];
+static uint8_t s_twi_transfer_buffer[20];
+
+#define DRIVER_C   1
 
 // These buffers match the IS31FL3731 PWM registers 0x24-0xB3.
 // Storing them like this is optimal for I2C transfers to the registers.
 // We could optimize this and take out the unused registers from these
 // buffers and the transfers in IS31FL3731_write_pwm_buffer() but it's
 // probably not worth the extra complexity.
-uint8_t g_pwm_buffer[DRIVER_COUNT][144];
-bool    g_pwm_buffer_update_required[DRIVER_COUNT] = {false};
+static uint8_t s_pwm_buffer[DRIVER_C][144];
+static bool    s_pwm_buffer_update_required[DRIVER_C] = {false};
 
-uint8_t g_led_control_registers[DRIVER_COUNT][18]             = {{0}};
-bool    g_led_control_registers_update_required[DRIVER_COUNT] = {false};
+static uint8_t s_led_control_registers[DRIVER_C][18]             = {{0}};
+static bool    s_led_control_registers_update_required[DRIVER_C] = {false};
+
+static bool s_available = true;
+
+#define DRIVER_LED_NUM 13
+static const is31_led s_is31_leds[DRIVER_LED_NUM] = {
+    {0, C1_9,   C3_10,  C4_10},
+    {0, C1_10,  C2_10,  C4_11},
+    {0, C1_11,  C2_11,  C3_11},
+    {0, C1_12,  C2_12,  C3_12},
+    {0, C1_13,  C2_13,  C3_13},
+    {0, C1_14,  C2_14,  C3_14},
+    {0, C1_15,  C2_15,  C3_15},
+    {0, C1_16,  C2_16,  C3_16},
+
+    {0, C9_9,   C8_9,   C7_9},
+    {0, C9_10,  C8_10,  C7_10},
+    {0, C9_11,  C8_11,  C7_11},
+    {0, C9_12,  C8_12,  C7_12},
+    {0, C9_13,  C8_13,  C7_13},
+    //{0, C9_14,  C8_14,  C7_14},
+    //{0, C9_15,  C8_15,  C6_14},
+    //{0, C9_16,  C7_15,  C6_15},
+};
+
+bool IS31FL3731_available(void)
+{
+    return s_available;
+}
+
 
 // This is the bit pattern in the LED control registers
 // (for matrix A, add one to register for matrix B)
@@ -82,15 +113,15 @@ bool    g_led_control_registers_update_required[DRIVER_COUNT] = {false};
 // 0x10 - R16,R15,R14,R13,R12,R11,R10,R09
 
 void IS31FL3731_write_register(uint8_t addr, uint8_t reg, uint8_t data) {
-    g_twi_transfer_buffer[0] = reg;
-    g_twi_transfer_buffer[1] = data;
+    s_twi_transfer_buffer[0] = reg;
+    s_twi_transfer_buffer[1] = data;
 
 #if ISSI_PERSISTENCE > 0
     for (uint8_t i = 0; i < ISSI_PERSISTENCE; i++) {
-        if (i2c_transmit(addr << 1, g_twi_transfer_buffer, 2, ISSI_TIMEOUT) == 0) break;
+        if (i2c_transmit(addr << 1, s_twi_transfer_buffer, 2, ISSI_TIMEOUT) == 0) break;
     }
 #else
-    i2c_transmit(addr << 1, g_twi_transfer_buffer, 2, ISSI_TIMEOUT);
+    i2c_transmit(addr << 1, s_twi_transfer_buffer, 2, ISSI_TIMEOUT);
 #endif
 }
 
@@ -103,20 +134,20 @@ void IS31FL3731_write_pwm_buffer(uint8_t addr, uint8_t *pwm_buffer) {
     // iterate over the pwm_buffer contents at 16 byte intervals
     for (int i = 0; i < 144; i += 16) {
         // set the first register, e.g. 0x24, 0x34, 0x44, etc.
-        g_twi_transfer_buffer[0] = 0x24 + i;
+        s_twi_transfer_buffer[0] = 0x24 + i;
         // copy the data from i to i+15
         // device will auto-increment register for data after the first byte
         // thus this sets registers 0x24-0x33, 0x34-0x43, etc. in one transfer
         for (int j = 0; j < 16; j++) {
-            g_twi_transfer_buffer[1 + j] = pwm_buffer[i + j];
+            s_twi_transfer_buffer[1 + j] = pwm_buffer[i + j];
         }
 
 #if ISSI_PERSISTENCE > 0
         for (uint8_t i = 0; i < ISSI_PERSISTENCE; i++) {
-            if (i2c_transmit(addr << 1, g_twi_transfer_buffer, 17, ISSI_TIMEOUT) == 0) break;
+            if (i2c_transmit(addr << 1, s_twi_transfer_buffer, 17, ISSI_TIMEOUT) == 0) break;
         }
 #else
-        i2c_transmit(addr << 1, g_twi_transfer_buffer, 17, ISSI_TIMEOUT);
+        i2c_transmit(addr << 1, s_twi_transfer_buffer, 17, ISSI_TIMEOUT);
 #endif
     }
 }
@@ -126,6 +157,14 @@ void IS31FL3731_init(uint8_t addr) {
     // in the LED driver's PWM registers, first enable software shutdown,
     // then set up the mode and other settings, clear the PWM registers,
     // then disable software shutdown.
+    s_twi_transfer_buffer[0] = ISSI_COMMANDREGISTER;
+    s_twi_transfer_buffer[1] = ISSI_BANK_FUNCTIONREG;
+
+    if (i2c_transmit(addr << 1, s_twi_transfer_buffer, 2, ISSI_TIMEOUT) != I2C_STATUS_SUCCESS) {
+        s_available = false;
+        return;
+    }
+
 
     // select "function register" bank
     IS31FL3731_write_register(addr, ISSI_COMMANDREGISTER, ISSI_BANK_FUNCTIONREG);
@@ -174,25 +213,28 @@ void IS31FL3731_init(uint8_t addr) {
 }
 
 void IS31FL3731_set_color(int index, uint8_t red, uint8_t green, uint8_t blue) {
-    if (index >= 0 && index < DRIVER_LED_TOTAL) {
-        is31_led led = g_is31_leds[index];
+    if (!IS31FL3731_available()) return;
+
+    if (index >= 0 && index < DRIVER_LED_NUM) {
+        is31_led led = s_is31_leds[index];
 
         // Subtract 0x24 to get the second index of g_pwm_buffer
-        g_pwm_buffer[led.driver][led.r - 0x24]   = red;
-        g_pwm_buffer[led.driver][led.g - 0x24]   = green;
-        g_pwm_buffer[led.driver][led.b - 0x24]   = blue;
-        g_pwm_buffer_update_required[led.driver] = true;
+        s_pwm_buffer[led.driver][led.r - 0x24]   = red;
+        s_pwm_buffer[led.driver][led.g - 0x24]   = green;
+        s_pwm_buffer[led.driver][led.b - 0x24]   = blue;
+        s_pwm_buffer_update_required[led.driver] = true;
     }
 }
 
 void IS31FL3731_set_color_all(uint8_t red, uint8_t green, uint8_t blue) {
-    for (int i = 0; i < DRIVER_LED_TOTAL; i++) {
+    for (int i = 0; i < DRIVER_LED_NUM; i++) {
         IS31FL3731_set_color(i, red, green, blue);
     }
 }
 
 void IS31FL3731_set_led_control_register(uint8_t index, bool red, bool green, bool blue) {
-    is31_led led = g_is31_leds[index];
+    if (!IS31FL3731_available()) return;
+    is31_led led = s_is31_leds[index];
 
     uint8_t control_register_r = (led.r - 0x24) / 8;
     uint8_t control_register_g = (led.g - 0x24) / 8;
@@ -202,36 +244,38 @@ void IS31FL3731_set_led_control_register(uint8_t index, bool red, bool green, bo
     uint8_t bit_b              = (led.b - 0x24) % 8;
 
     if (red) {
-        g_led_control_registers[led.driver][control_register_r] |= (1 << bit_r);
+        s_led_control_registers[led.driver][control_register_r] |= (1 << bit_r);
     } else {
-        g_led_control_registers[led.driver][control_register_r] &= ~(1 << bit_r);
+        s_led_control_registers[led.driver][control_register_r] &= ~(1 << bit_r);
     }
     if (green) {
-        g_led_control_registers[led.driver][control_register_g] |= (1 << bit_g);
+        s_led_control_registers[led.driver][control_register_g] |= (1 << bit_g);
     } else {
-        g_led_control_registers[led.driver][control_register_g] &= ~(1 << bit_g);
+        s_led_control_registers[led.driver][control_register_g] &= ~(1 << bit_g);
     }
     if (blue) {
-        g_led_control_registers[led.driver][control_register_b] |= (1 << bit_b);
+        s_led_control_registers[led.driver][control_register_b] |= (1 << bit_b);
     } else {
-        g_led_control_registers[led.driver][control_register_b] &= ~(1 << bit_b);
+        s_led_control_registers[led.driver][control_register_b] &= ~(1 << bit_b);
     }
 
-    g_led_control_registers_update_required[led.driver] = true;
+    s_led_control_registers_update_required[led.driver] = true;
 }
 
 void IS31FL3731_update_pwm_buffers(uint8_t addr, uint8_t index) {
-    if (g_pwm_buffer_update_required[index]) {
-        IS31FL3731_write_pwm_buffer(addr, g_pwm_buffer[index]);
+    if (!IS31FL3731_available()) return;
+    if (s_pwm_buffer_update_required[index]) {
+        IS31FL3731_write_pwm_buffer(addr, s_pwm_buffer[index]);
     }
-    g_pwm_buffer_update_required[index] = false;
+    s_pwm_buffer_update_required[index] = false;
 }
 
 void IS31FL3731_update_led_control_registers(uint8_t addr, uint8_t index) {
-    if (g_led_control_registers_update_required[index]) {
+    if (!IS31FL3731_available()) return;
+    if (s_led_control_registers_update_required[index]) {
         for (int i = 0; i < 18; i++) {
-            IS31FL3731_write_register(addr, i, g_led_control_registers[index][i]);
+            IS31FL3731_write_register(addr, i, s_led_control_registers[index][i]);
         }
     }
-    g_led_control_registers_update_required[index] = false;
+    s_led_control_registers_update_required[index] = false;
 }

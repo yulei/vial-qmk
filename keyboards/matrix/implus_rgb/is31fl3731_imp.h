@@ -19,7 +19,9 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include "led/issi/is31fl3733.h"
 
+/*
 typedef struct is31_led {
     uint8_t driver : 2;
     uint8_t r;
@@ -28,7 +30,9 @@ typedef struct is31_led {
 } __attribute__((packed)) is31_led;
 
 extern const is31_led g_is31_leds[DRIVER_LED_TOTAL];
+*/
 
+bool IS31FL3731_available(void);
 void IS31FL3731_init(uint8_t addr);
 void IS31FL3731_write_register(uint8_t addr, uint8_t reg, uint8_t data);
 void IS31FL3731_write_pwm_buffer(uint8_t addr, uint8_t *pwm_buffer);
