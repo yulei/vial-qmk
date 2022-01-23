@@ -18,7 +18,7 @@
 #include "quantum.h"
 
 
-#define LAYOUT_default( \
+#define LAYOUT_ansi( \
     K000, K001, K002, K003, K004, K005, K006, K007, K008, K009, K010, K011, K012, K013,        K014, K015, K016, \
   \
 	K100, K101, K102, K103, K104, K105, K106, K107, K108, K109, K110, K111, K112, K113,          K114, K115, K116, \
@@ -35,7 +35,7 @@
 	{ K500,  K501,  K502, KC_NO,  K507,  K511,  K512,  K513,  K313,  K213,  K113,  K013,  K514,  K515,  K516}, \
 }
 
-#define LAYOUT_all( \
+#define LAYOUT_default( \
     K000, K001, K002, K003, K004, K005, K006, K007, K008, K009, K010, K011, K012, K013,        K014, K015, K016, \
   \
 	K100, K101, K102, K103, K104, K105, K106, K107, K108, K109, K110, K111, K112, K113,          K114, K115, K116, \
