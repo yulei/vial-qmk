@@ -33,5 +33,5 @@ RGB_MATRIX_ENABLE = yes
 RGB_MATRIX_DRIVER = custom	# Use RGB matrix
 CIE1931_CURVE = yes
 
-SRC += implus_driver.c is31fl3236.c
-QUANTUM_LIB_SRC += i2c_master.c ws2812_scroll.c led/issi/is31fl3733.c
+SRC += implus_driver.c ws2812_scroll.c is31fl3236.c
+QUANTUM_LIB_SRC += i2c_master.c led/issi/is31fl3733.c

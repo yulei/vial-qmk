@@ -47,8 +47,9 @@
 //#define NO_PRINT
 
 //rgb light setting
+#define RGBLED_NUM          32
 //#define RGBLED_NUM          13
-#define RGBLED_NUM          4
+//#define RGBLED_NUM          4
 #define RGB_DI_PIN          E2
 #define RGBLIGHT_EFFECT_BREATHING
 #define RGBLIGHT_EFFECT_RAINBOW_MOOD
@@ -69,13 +70,14 @@
 #define LED_SCROLL_LOCK_PIN D2
 
 // rgb effects
-#define EFFECTS_LED_NUM     11 
+//#define EFFECTS_LED_NUM     11 
+#define EFFECTS_LED_NUM     RGBLED_NUM
 
-#define DRIVER_LED_TOTAL    12
-#define IS31FL3236_ADDR     0x78
+//#define DRIVER_LED_TOTAL    12
+//#define IS31FL3236_ADDR     0x78
 
-//#define DRIVER_COUNT        1
-//#define DRIVER_LED_TOTAL    RGBLED_NUM
-//#define IS31FL3731_ADDR     0x74
+#define DRIVER_COUNT        1
+#define DRIVER_LED_TOTAL    RGBLED_NUM
+#define IS31FL3731_ADDR     0x74
 
 #define EARLY_INIT_PERFORM_BOOTLOADER_JUMP FALSE

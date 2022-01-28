@@ -60,7 +60,7 @@
 static uint8_t s_pwm_buffer[DRIVER_NUM][PWM_BUFFER_SIZE] = {0};
 static bool    s_pwm_buffer_update_required[DRIVER_NUM] = {false, false};
 
-//uint8_t g_led_control_registers[36] = {0};
+static uint8_t s_led_control_registers[36] = {0};
 //bool    g_led_control_registers_update_required = false;
 
 void IS31FL3236_write_pwm_buffer(uint8_t addr, uint8_t *pwm_buffer)
@@ -86,13 +86,14 @@ void IS31FL3236_init(uint8_t addr, uint8_t index)
     i2c_writeReg(addr, ISSI_REG_SHUTDOWN, &data, 1, ISSI_TIMEOUT);
 
     // turn on all LEDs in the LED control register
-    data = 0x07;
+    //data = 0x07;
     //data = 0x03;
+    data = 0x01;
     for (int i = 0; i < 36; i++) {
-        //g_led_control_registers[i] = 0x01;
-        i2c_writeReg(addr, ISSI_REG_CONTROL+i, &data, 1, ISSI_TIMEOUT);
+        s_led_control_registers[i] = data;
+        //i2c_writeReg(addr, ISSI_REG_CONTROL+i, &data, 1, ISSI_TIMEOUT);
     }
-    //i2c_writeReg(addr, ISSI_REG_CONTROL, &g_led_control_registers[0], 36, ISSI_TIMEOUT);
+    i2c_writeReg(addr, ISSI_REG_CONTROL, &s_led_control_registers[0], 36, ISSI_TIMEOUT);
 
     // set PWM on all LEDs
     for (int i = 0; i < PWM_BUFFER_SIZE; i++) {

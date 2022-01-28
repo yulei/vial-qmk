@@ -45,6 +45,7 @@
 
 /* disable print */
 //#define NO_PRINT
+#define IS31FL3733_CURRENT  0x80
 
 #define SCROLL_DI_PIN       B0
 //rgb light setting

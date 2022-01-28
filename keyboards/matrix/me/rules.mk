@@ -20,6 +20,6 @@ BACKLIGHT_ENABLE = no       # Enable keyboard backlight functionality
 RGBLIGHT_ENABLE = yes       # Enable keyboard RGB underglow
 AUDIO_ENABLE = no           # Audio output
 
-SRC += rgb_effects.c is31fl3236.c
-#SRC += led/issi/is31fl3731.c
+#SRC += rgb_effects.c is31fl3236.c
+SRC += led/issi/is31fl3731.c
 QUANTUM_LIB_SRC += i2c_master.c
