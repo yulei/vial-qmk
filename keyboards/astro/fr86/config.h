@@ -27,6 +27,27 @@
 #define MATRIX_ROWS         6
 #define MATRIX_COLS         16
 
+#ifdef V2
+#define MATRIX_ROW_PINS     { C7, C6, B15, B14, B13, B12 }
+
+#define L_MASK              0x08
+#define R_MASK              0x10
+#define MATRIX_COL_CHANNELS { L_MASK|2, L_MASK|1, L_MASK|0, L_MASK|3, L_MASK|5, L_MASK|7, L_MASK|6, L_MASK|4, \
+                            R_MASK|2, R_MASK|1, R_MASK|0, R_MASK|3, R_MASK|5, R_MASK|7, R_MASK|6, R_MASK|4}
+
+#define LEFT_EN_PIN     A6
+#define RIGHT_EN_PIN    A5
+#define COL_A_PIN       C5
+#define COL_B_PIN       C4
+#define COL_C_PIN       A7
+
+#define DISCHARGE_PIN   C3
+#define KEY_PIN         A2
+
+#define LED_CAPS_LOCK_PIN       C8
+#define LED_SCROLL_LOCK_PIN     C9
+#define LED_NUM_LOCK_PIN        C12
+#else
 #define MATRIX_ROW_PINS     { B2, B10, B12, B13, B14, B15 }
 
 #define L_MASK          0x08
@@ -43,6 +64,11 @@
 #define DISCHARGE_PIN   A4
 #define KEY_PIN         A2
 
+#define LED_CAPS_LOCK_PIN       B1
+#define LED_SCROLL_LOCK_PIN     B0
+#define LED_NUM_LOCK_PIN        C6 
+#endif
+
 #define LOW_THRESHOLD   550
 #define HIGH_THRESHOLD  650
 
@@ -56,7 +82,3 @@
 //#define LOCKING_RESYNC_ENABLE
 
 #define STM32_HSECLK 16000000
-
-#define LED_CAPS_LOCK_PIN       B1
-#define LED_SCROLL_LOCK_PIN     B0
-#define LED_NUM_LOCK_PIN        C6 
