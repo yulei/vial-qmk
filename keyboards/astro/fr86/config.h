@@ -82,3 +82,7 @@
 //#define LOCKING_RESYNC_ENABLE
 
 #define STM32_HSECLK 16000000
+
+#define FEE_PAGE_SIZE           0x4000
+#define FEE_PAGE_COUNT          1
+#define FEE_PAGE_BASE_ADDRESS   0x800C000
