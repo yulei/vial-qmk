@@ -3,10 +3,10 @@
 MCU = STM32F401
 
 # Bootloader selection
-#BOOTLOADER = stm32-dfu
-BOOTLOADER = tinyuf2
+BOOTLOADER = stm32-dfu
+#BOOTLOADER = tinyuf2
 
-MCU_LDSCRIPT = STM32F401xC
+#MCU_LDSCRIPT = STM32F401xC
 
 CUSTOM_MATRIX = lite
 SRC += analog.c ec_matrix.c
@@ -23,4 +23,3 @@ NKRO_ENABLE = yes           # Enable N-Key Rollover
 BACKLIGHT_ENABLE = no       # Enable keyboard backlight functionality
 RGBLIGHT_ENABLE = no        # Enable keyboard RGB underglow
 AUDIO_ENABLE = no           # Audio output
-#KEYBOARD_SHARED_EP = yes
