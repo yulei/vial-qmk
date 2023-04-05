@@ -36,3 +36,9 @@
 #define DEBOUNCE    5
 
 #define STM32_HSECLK 16000000
+
+#define FEE_PAGE_SIZE            0x4000
+#define FEE_PAGE_COUNT           1
+#define FEE_PAGE_BASE_ADDRESS    0x800C000
+
+#define LED_CAPS_LOCK_PIN        A10

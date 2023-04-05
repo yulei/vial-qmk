@@ -4,16 +4,14 @@ MCU = STM32F411
 # Linker script to use
 # - it should exist either in <chibios>/os/common/ports/ARMCMx/compilers/GCC/ld/
 #   or <this_dir>/ld/
-#MCU_LDSCRIPT = s73_boot
+#MCU_LDSCRIPT = STM32F411xE.ld
 
 # Board: it should exist either in <chibios>/os/hal/boards/
 #  or <this_dir>/boards
 BOARD = ST_NUCLEO64_F411RE
 
 # Bootloader selection
-#BOOTLOADER = custom
-BOOTLOADER = stm32-dfu
-
+BOOTLOADER = custom 
 
 # Build Options
 #   change yes to no to disable
@@ -26,7 +24,11 @@ COMMAND_ENABLE = no         # Commands for debug and configuration
 NKRO_ENABLE = yes            # Enable N-Key Rollover
 NO_USB_STARTUP_CHECK = yes	# Disable initialization only when usb is plugged in
 
-#CUSTOM_MATRIX = lite
+CUSTOM_MATRIX = lite
+
+FIRMWARE_FORMAT = uf2
 
 # project specific files
-#SRC += matrix.c 
+SRC += s73_matrix.c 
+SRC += SEGGER_RTT.c
+SRC += SEGGER_RTT_printf.c

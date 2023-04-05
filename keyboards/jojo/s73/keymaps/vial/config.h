@@ -1,5 +1,6 @@
+
 /**
- * s73.c
+ * config.h
  *
     Copyright 2023 astro
 
@@ -17,21 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "s73.h"
+#pragma once
 
-#define REBOOT_MAGIC 0x41544B42
-void shutdown_user(void)
-{
-    // set the magic number for resetting to the bootloader
-    *(uint32_t *)(&(RTCD1.rtc->BKP0R)) = REBOOT_MAGIC;
-}
-
-void bootloader_jump(void) {
-    shutdown_user();
-    NVIC_SystemReset();
-}
-
-#include "SEGGER_RTT.h"
-int8_t sendchar(uint8_t c) {
-    return SEGGER_RTT_PutChar(0, c);
-}
+#define VIAL_INSECURE
+#define VIAL_KEYBOARD_UID {0x28, 0x4D, 0x06, 0x3A, 0x2A, 0x1E, 0x4C, 0x9A}
