@@ -4,7 +4,7 @@ MCU = STM32F411
 # Linker script to use
 # - it should exist either in <chibios>/os/common/ports/ARMCMx/compilers/GCC/ld/
 #   or <this_dir>/ld/
-MCU_LDSCRIPT = m20add_boot
+#MCU_LDSCRIPT = m20add_boot
 
 # Board: it should exist either in <chibios>/os/hal/boards/
 #  or <this_dir>/boards

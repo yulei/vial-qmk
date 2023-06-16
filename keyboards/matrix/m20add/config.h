@@ -87,3 +87,7 @@
 #define DRIVER_ADDR_1 0b1110100
 #define DRIVER_COUNT 1
 #define DRIVER_LED_TOTAL RGBLED_NUM
+
+#define FEE_PAGE_SIZE            0x4000
+#define FEE_PAGE_COUNT           1
+#define FEE_PAGE_BASE_ADDRESS    0x800C000
