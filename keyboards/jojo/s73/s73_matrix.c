@@ -65,7 +65,7 @@ knob_8421_t right_knob = {
     .current = 0,
     .debounce = false,
     .ticks = 0,
-    .cw = {13,2},
+    .cw = {12,2},
     .ccw = {14,5},
 };
 
