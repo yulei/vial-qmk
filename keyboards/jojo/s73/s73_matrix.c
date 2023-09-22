@@ -34,7 +34,7 @@ static pin_t aux_row_pins[AUX_MATRIX_ROWS] = AUX_MATRIX_ROW_PINS;
 
 // It's a 8421 encoder
 #define KNOB_PIN_COUNT  4
-#define KNOB_DEBOUNCE   20
+#define KNOB_DEBOUNCE   50
 
 typedef struct knob_8421{
         pin_t pins[KNOB_PIN_COUNT];
@@ -48,7 +48,7 @@ typedef struct knob_8421{
 } knob_8421_t;
 
 knob_8421_t left_knob = {
-    .pins = {A15, C11, C10, C12},
+    .pins = {A15, C10, C11, C12},
     .com = D2,
     .last = 0,
     .current = 0,
@@ -59,7 +59,7 @@ knob_8421_t left_knob = {
 };
 
 knob_8421_t right_knob = {
-    .pins = {C0, C2, C1, C3},
+    .pins = {C0, C1, C2, C3},
     .com = A0,
     .last = 0,
     .current = 0,
@@ -117,14 +117,34 @@ static void knob_init(knob_8421_t *knob)
     knob->ticks = timer_read32();
 }
 
+static bool knob_is_cw(uint8_t last, uint8_t current)
+{
+    uint8_t diff = current > last ? current - last : last - current;
+
+    if (current < last) {
+        if (diff > 4) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    if (current > last) {
+        if (diff > 4) {
+            return false; 
+        } else {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 static void knob_tap_key(knob_8421_t *knob)
 {
     keyevent_t evt = {.pressed = true };
-    if ((knob->current > knob->last) || ((knob->last-knob->current)>2)) {
-        evt.key = knob->cw;
-    } else {
-        evt.key = knob->ccw;
-    }
+    evt.key = knob_is_cw(knob->last, knob->current) ? knob->cw : knob->ccw;
+
     evt.time = timer_read();
     action_exec(evt);
 
