@@ -211,10 +211,15 @@ bool matrix_scan_custom(matrix_row_t current_matrix[])
         writePinLow(aux_row_pins[row]);
         matrix_io_delay();
         for (int col = 0; col < AUX_MATRIX_COLS; col++) {
+            int c = col;
+            if (row==0) {
+                if (col==0) c = 1;
+                if (col==1) c = 0;
+            }
             if (readPin(aux_col_pins[col])) {
-                current_row_value &= ~(1<<(row*AUX_MATRIX_COLS + col + 2));
+                current_row_value &= ~(1<<(row*AUX_MATRIX_COLS + c + 2));
             } else {
-                current_row_value |=  (1<<(row*AUX_MATRIX_COLS + col + 2));
+                current_row_value |=  (1<<(row*AUX_MATRIX_COLS + c + 2));
             }
             if (last_row_value != current_row_value) {
                 current_matrix[MATRIX_ROWS-1] = current_row_value;
