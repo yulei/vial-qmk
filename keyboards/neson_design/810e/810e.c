@@ -51,12 +51,12 @@ enum {
 
 // led index
 #define ST_LEFT_BEGIN       0
-#define ST_LEFT_SIZE        4
+#define ST_LEFT_SIZE        3
 
 #define ST_LEFT_END         (ST_LEFT_BEGIN+ST_LEFT_SIZE-1)
 
-#define ST_RIGHT_BEGIN      86
-#define ST_RIGHT_SIZE       4
+#define ST_RIGHT_BEGIN      87
+#define ST_RIGHT_SIZE       3
 #define ST_RIGHT_END        (ST_RIGHT_BEGIN+ST_RIGHT_SIZE-1)
 
 #ifdef RGBLIGHT_ENABLE
@@ -74,8 +74,8 @@ typedef struct {
 } rgb_state_t;
 
 static rgb_state_t rgb_state = {
-    .state = NORMAL,
-    //SELF_TESTING,
+    .state = //NORMAL,
+    SELF_TESTING,
     .testing = ST_STAGE_1,
     .ticks = 0,
     .alert = false,
@@ -104,7 +104,7 @@ static void self_testing(void)
             }
 
             if (rgb_state.index >= ST_LEFT_END) {
-                for (int i = rgb_state.index - 1; i < RGB_MATRIX_LED_COUNT - rgb_state.index + 1; i++) {
+                for (int i = rgb_state.index - 1; i < IS31FL3729_LED_TOTAL - rgb_state.index + 1; i++) {
                     IS31FL3729_set_color(i, led.r, led.g, led.b);
                 }
                 if (rgb_state.index == ST_LEFT_END) {
@@ -132,7 +132,6 @@ static void self_testing(void)
             }
             for (i = 0; i < ST_RIGHT_SIZE; i++) {
                 IS31FL3729_set_color(ST_RIGHT_BEGIN+i, led.r, led.g, led.b);
-
             }
             if (rgb_state.dir) {
                 // left to right
@@ -140,17 +139,17 @@ static void self_testing(void)
                     IS31FL3729_set_color(i, led.r, led.g, led.b);
                 }
                 rgb_state.index += ST_LEFT_SIZE+ST_RIGHT_SIZE;
-                if (rgb_state.index == ST_RIGHT_BEGIN) {
+                if (rgb_state.index >= ST_RIGHT_BEGIN) {
                     rgb_state.dir = !rgb_state.dir;
                     rgb_state.count--;
                 }
             } else {
                 // right to left
-                for (int i = rgb_state.index - ST_RIGHT_SIZE; i < rgb_state.index; i++) {
+                for (int i = rgb_state.index - ST_LEFT_SIZE - ST_RIGHT_SIZE; i < rgb_state.index; i++) {
                     IS31FL3729_set_color(i, led.r, led.g, led.b);
                 }
-                rgb_state.index -= ST_LEFT_SIZE + ST_RIGHT_SIZE;
-                if (rgb_state.index == ST_LEFT_BEGIN+ST_LEFT_SIZE) {
+                rgb_state.index = rgb_state.index - ST_LEFT_SIZE - ST_RIGHT_SIZE;
+                if (rgb_state.index <= ST_LEFT_BEGIN+ST_LEFT_SIZE) {
                     rgb_state.dir = !rgb_state.dir;
                     rgb_state.count--;
                 }
@@ -166,13 +165,13 @@ static void self_testing(void)
         }
         break;
         case ST_STAGE_3:
-            if (rgb_state.index != RGB_MATRIX_LED_COUNT/2) {
+            if (rgb_state.index != IS31FL3729_LED_TOTAL/2) {
                 IS31FL3729_set_color_all(0, 0, 0);
             }
 
             // light left and right
 
-            if (rgb_state.index == RGB_MATRIX_LED_COUNT/2) {
+            if (rgb_state.index == IS31FL3729_LED_TOTAL/2) {
                 if (rgb_state.duration) {
                     rgb_state.duration--;
                 } else {
@@ -390,6 +389,7 @@ bool led_update_kb(led_t led_state)
 
     if (res) {
         writePin(LED_CAPS_LOCK_PIN, led_state.caps_lock);
+        writePin(LED_NUM_LOCK_PIN, led_state.num_lock);
 
         if (rgb_state.state != SELF_TESTING) {
             if (led_state.caps_lock) {

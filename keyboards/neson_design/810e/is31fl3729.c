@@ -52,7 +52,7 @@
 #define PD_8K_ALL           0x07
 
 #ifndef IS31FL3729_PD_DEFAULT
-    #define IS31FL3729_PD_DEFAULT PD_8K_ALL
+    #define IS31FL3729_PD_DEFAULT PD_NO
 #endif
 
 #define PU_OFFSET           0x00
@@ -66,7 +66,7 @@
 #define PU_8K_ALL           0x07
 
 #ifndef IS31FL3729_PU_DEFAULT
-    #define IS31FL3729_PU_DEFAULT PU_8K
+    #define IS31FL3729_PU_DEFAULT PU_NO
 #endif
 
 // reset command
